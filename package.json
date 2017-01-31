@@ -1,0 +1,16 @@
+{
+  "name": "sound-machine-typescript-electron-guide",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Beanze",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/electron": "^1.4.31",
+    "@types/node": "^7.0.4",
+    "typescript": "^2.1.5"
+  }
+}
