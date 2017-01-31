@@ -3,15 +3,21 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "start": "gulp scripts && node dist/main.js",
+    "start": "gulp build && electron dist/App.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Beanze",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^7.0.4",
+    "electron": "^1.4.15",
     "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-sequence": "^0.4.6",
+    "gulp-sourcemaps": "^2.4.0",
     "gulp-typescript": "^3.1.4",
-    "typescript": "^2.1.5"
+    "merge-stream": "^1.0.1",
+    "typescript": "^2.1.5",
+    "typings": "^2.1.0",
+    "yargs": "^6.6.0"
   }
 }
