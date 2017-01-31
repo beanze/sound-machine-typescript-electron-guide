@@ -9,6 +9,7 @@
   "author": "Beanze",
   "license": "ISC",
   "devDependencies": {
+    "@types/electron": "^1.4.31",
     "electron": "^1.4.15",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",

@@ -1,32 +1,51 @@
-import {BrowserWindow} from 'electron';
+import {app, BrowserWindow} from 'electron';
 
 export default class Main {
-    static mainWindow: Electron.BrowserWindow;
-    static application: Electron.App;
-    static BrowserWindow;
-    private static onWindowAllClosed() {
-        if (process.platform !== 'darwin')
-            Main.application.quit();
+    private mainWindow: Electron.BrowserWindow;
+    private application: Electron.App;
+    
+    private constructor() {
+        this.application = app;
+
+        this.application.on('window-all-closed',this.onWindowAllClosed);
+        this.application.on('ready', this.createWiindow);
+        this.application.on('activate', this.createWiindow)
+   }
+    
+    private onWindowAllClosed() {
+        if (process.platform !== 'darwin') {
+            this.application.quit();
+        }
     }
-    private static onClose(){
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
-        Main.mainWindow = null;
+
+    private close() {
+        this.mainWindow = null;
     }
-    private static onReady(){
+
+    private createWiindow() {
         // this is a dependency we will have to live with
         // because we can't create BrowserWindow until
         // onReady fires.
-        Main.mainWindow = new Main.BrowserWindow({width: 800, height: 600})
-        Main.mainWindow.loadURL('file://' + __dirname + '/../renderer/index.html');
-        Main.mainWindow.on('closed', Main.onClose);
+        this.mainWindow = new BrowserWindow({
+            width: 368,
+            height: 700,
+            frame: false,
+            resizable: true
+        })
+
+        BrowserWindow.addDevToolsExtension('/Users/leams/Library/Application\ Support/Google/Chrome/Default/Extensions/elgalmkoelokbchhkhacckoklkejnhcd/1.2.10_0')
+
+        this.mainWindow.loadURL('file://' + __dirname + '/../renderer/index.html');
+
+        const self = this;
+
+        this.mainWindow.on('closed', () => {
+            self.close()
+        });
     }
-    static main(app: Electron.App,browserWindow: typeof BrowserWindow){
-        Main.BrowserWindow = browserWindow;
-        Main.application = app;
-        Main.application.on('window-all-closed',Main.onWindowAllClosed);
-        Main.application.on('ready', Main.onReady);
+
+    static main() {
+        const main = new Main()
     }
 }
 

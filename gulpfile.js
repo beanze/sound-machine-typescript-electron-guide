@@ -22,7 +22,7 @@ const buildMainProject = () => {
                                   .pipe(sourcemaps.init())
                                   .pipe(ts.createProject('tsconfig.json')())
                                   .js
-                                  .pipe(sourcemaps.write())
+                                  .pipe(sourcemaps.write('.'))
                                   .pipe(gulp.dest(mainDestPath))
 }
 
