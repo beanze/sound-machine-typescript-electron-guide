@@ -7,25 +7,24 @@ export default class Main {
     private constructor() {
         this.application = app;
 
-        this.application.on('window-all-closed',this.onWindowAllClosed);
-        this.application.on('ready', this.createWiindow);
-        this.application.on('activate', this.createWiindow)
+        this.application.on('window-all-closed', () => this.onWindowAllClosed())
+                        .on('ready', () => this.createWiindow())
+                        .on('activate', () => this.createWiindow())
    }
     
     private onWindowAllClosed() {
         if (process.platform !== 'darwin') {
             this.application.quit();
         }
-    }
+    }  
 
     private close() {
         this.mainWindow = null;
+        console.log('closed')
     }
 
     private createWiindow() {
-        // this is a dependency we will have to live with
-        // because we can't create BrowserWindow until
-        // onReady fires.
+
         this.mainWindow = new BrowserWindow({
             width: 368,
             height: 700,
@@ -37,16 +36,10 @@ export default class Main {
 
         this.mainWindow.loadURL('file://' + __dirname + '/../renderer/index.html');
 
-        const self = this;
-
-        this.mainWindow.on('closed', () => {
-            self.close()
-        });
+        this.mainWindow.on('closed', () => this.close())
     }
 
     static main() {
         const main = new Main()
     }
 }
-
-

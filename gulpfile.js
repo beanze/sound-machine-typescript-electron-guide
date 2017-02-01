@@ -17,32 +17,31 @@ const mode = argv.mode || 'debug'
 
 console.log('mode :' + mode)
 
-const buildMainProject = () => { 
-  return gulp.src('src/**/*.ts')
-                                  .pipe(sourcemaps.init())
-                                  .pipe(ts.createProject('tsconfig.json')())
-                                  .js
-                                  .pipe(sourcemaps.write('.'))
-                                  .pipe(gulp.dest(mainDestPath))
-}
-
-gulp.task('buildRendererProject', () => {
-  return gulp.src('src/renderer/**/*').pipe(gulp.dest(rendererDestPath))
-})
+const coreProject = ts.createProject('tsconfig.json')
 
 gulp.task('clean', function() {
   return gulp.src(distDir).pipe(clean())
 });
 
-gulp.task('scripts', () => {
-  return buildMainProject()
-  // return merge(buildMainProject, buildRendererProject)
-});
+gulp.task('buildMain', () => coreProject.src()
+            .pipe(sourcemaps.init())
+            .pipe(coreProject())
+            .js
+            .pipe(sourcemaps.write('.', {
+                sourceRoot: '../src/'
+            }))
+            .pipe(gulp.dest(mainDestPath))
+);
 
-gulp.task('watch', ['scripts'], () => {
-  gulp.watch('src/**/*.ts', ['scripts']);
-});
+gulp.task('buildRenderer', () => {
+  return gulp.src('src/renderer/**/*').pipe(gulp.dest(rendererDestPath))
+})
 
-gulp.task('build', sequence('clean', 'scripts', 'buildRendererProject'))
+gulp.task('watch', ['build'], () => {
+  gulp.watch('src/**/*.ts', ['buildMain'])
+  gulp.watch('src/renderer/*', ['buildRenderer'])
+})
 
-gulp.task('default', ['watch']);
+gulp.task('build', sequence('clean', ['buildMain', 'buildRenderer']))
+
+gulp.task('default', ['watch'])
