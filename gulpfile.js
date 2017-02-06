@@ -5,8 +5,11 @@ const sequence = require('gulp-sequence')
 const ts = require('gulp-typescript')
 const clean = require('gulp-clean')
 const sourcemaps = require('gulp-sourcemaps')
+const embedTemplates = require('gulp-angular-embed-templates');
 
-const merge = require('merge-stream')
+const Builder = require('systemjs-builder')
+
+const merge = require('merge2')
 const argv = require('yargs').argv
 
 const distDir = 'dist';
@@ -17,15 +20,16 @@ const mode = argv.mode || 'debug'
 
 console.log('mode :' + mode)
 
-const coreProject = ts.createProject('tsconfig.json')
+const mainTsProject = ts.createProject('mainTsConfig.json')
+const rendererTsProject = ts.createProject('rendererTsConfig.json')
 
 gulp.task('clean', function() {
   return gulp.src(distDir).pipe(clean())
 });
 
-gulp.task('buildMain', () => coreProject.src()
+gulp.task('buildMain', () => mainTsProject.src()
             .pipe(sourcemaps.init())
-            .pipe(coreProject())
+            .pipe(mainTsProject())
             .js
             .pipe(sourcemaps.write('.', {
                 sourceRoot: '../src/'
@@ -33,13 +37,27 @@ gulp.task('buildMain', () => coreProject.src()
             .pipe(gulp.dest(mainDestPath))
 );
 
-gulp.task('buildRenderer', () => {
-  return gulp.src('src/renderer/**/*').pipe(gulp.dest(rendererDestPath))
-})
+gulp.task('buildRenderer', sequence('copyResources', 'buildRendererTS'))
+
+gulp.task('copyResources', () => gulp.src(['src/renderer/**/*.html', 'src/renderer/**/*.css'])
+                                     .pipe(gulp.dest(rendererDestPath))
+)
+
+// gulp.task('buildRendererTS', () => rendererTsProject.src()
+//             .pipe(sourcemaps.init())
+//             .pipe(rendererTsProject())
+//             .js
+//             .pipe(sourcemaps.write('.', {
+//                 sourceRoot: '../src/renderer/'
+//             }))
+//             .pipe(gulp.dest(rendererDestPath)))
+
+gulp.task('buildRendererTS', () => gulp.src('src/renderer/**/*.ts', {base: 'src/renderer'})
+.pipe(rendererTsProject()).js.pipe(gulp.dest(rendererDestPath)))
+
 
 gulp.task('watch', ['build'], () => {
-  gulp.watch('src/**/*.ts', ['buildMain'])
-  gulp.watch('src/renderer/*', ['buildRenderer'])
+  gulp.watch('src/**/*', ['build'])
 })
 
 gulp.task('build', sequence('clean', ['buildMain', 'buildRenderer']))

@@ -34,7 +34,7 @@ export default class Main {
 
         BrowserWindow.addDevToolsExtension('/Users/leams/Library/Application\ Support/Google/Chrome/Default/Extensions/elgalmkoelokbchhkhacckoklkejnhcd/1.2.10_0')
 
-        this.mainWindow.loadURL('file://' + __dirname + '/../renderer/index.html');
+        this.mainWindow.loadURL('file://' + __dirname + '/../renderer/App.html');
 
         this.mainWindow.on('closed', () => this.close())
     }
